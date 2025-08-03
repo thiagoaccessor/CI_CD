@@ -25,5 +25,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: front-testes001
-          package: ./frontend     # <-- Aqui o ajuste final
+          package: .   # publica tudo (server.js, package.json e frontend/)
           slot-name: production
