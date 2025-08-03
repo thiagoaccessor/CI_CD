@@ -18,6 +18,14 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Selecionar subscription
+        run: az account set --subscription 8565d32b-e115-4870-9c70-f0fdb4235689
+
+      - name: Testar login
+        run: |
+          az account show
+          az account list --output table
+
       - name: Deploy para Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
