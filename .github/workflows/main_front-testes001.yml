@@ -6,12 +6,44 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  ci:
+    name: Continuous Integration
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Rodar testes
+        run: npm test   # opcional, caso tenha testes
+
+      - name: Buildar aplicação
+        run: npm run build || echo "sem etapa de build"
+
+      - name: Upload dos artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: .   # publica tudo (server.js, package.json e frontend/)
+
+  cd:
+    name: Continuous Deployment
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar artefatos do CI
+        uses: actions/download-artifact@v4
+        with:
+          name: build
 
       - name: Login no Azure
         uses: azure/login@v2
@@ -25,5 +57,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: front-testes001
-          package: .   # publica tudo (server.js, package.json e frontend/)
+          package: .
           slot-name: production
